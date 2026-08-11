@@ -76,5 +76,77 @@
     <span>आजकल</span>
     <span>© 2026 Vinay</span>
   </footer>
+
+<!-- WRITE A POEM -->
+<section id="write" style="max-width:760px;margin:80px auto;padding:20px;">
+  <p class="eyebrow">03 / लिखें</p>
+  <h2>नई कविता लिखें</h2>
+
+  <input
+    id="poemTitle"
+    type="text"
+    placeholder="कविता का शीर्षक"
+    style="width:100%;padding:14px;margin:15px 0;font-size:16px;"
+  >
+
+  <textarea
+    id="poemText"
+    rows="12"
+    placeholder="अपनी कविता यहाँ लिखें..."
+    style="width:100%;padding:14px;font-size:16px;line-height:1.8;"
+  ></textarea>
+
+  <button
+    onclick="savePoem()"
+    style="margin-top:15px;padding:12px 24px;font-size:16px;cursor:pointer;"
+  >
+    कविता प्रकाशित करें
+  </button>
+
+  <p id="saveMessage"></p>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://jidzqbvkswgsgrixumch.supabase.co";
+
+const SUPABASE_KEY = "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function savePoem() {
+  const title = document.getElementById("poemTitle").value.trim();
+  const poem = document.getElementById("poemText").value.trim();
+  const message = document.getElementById("saveMessage");
+
+  if (!title || !poem) {
+    message.textContent = "कृपया शीर्षक और कविता दोनों लिखें।";
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("poems")
+    .insert({
+      title: title,
+      poem: poem,
+      published: true
+    });
+
+  if (error) {
+    console.error(error);
+    message.textContent = "कविता सेव नहीं हुई।";
+    return;
+  }
+
+  message.textContent = "✓ कविता प्रकाशित हो गई।";
+  document.getElementById("poemTitle").value = "";
+  document.getElementById("poemText").value = "";
+}
+</script>
+
 </body>
 </html>
